@@ -1,0 +1,24 @@
+# class file
+*.class
+
+# jar ..
+*.jar
+*.war
+*.ear
+
+# intelliJ IDEA config file
+.idea/
+*.iml
+out/
+
+# maven
+target/
+
+# gradle
+build/
+.gradle/
+
+# eclipse
+.settings/
+.project
+.classpath
