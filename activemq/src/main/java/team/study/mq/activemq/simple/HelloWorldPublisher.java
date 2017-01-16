@@ -12,11 +12,11 @@ import team.study.mq.activemq.util.MQCloseUtils;
  * 简单的测试avtiveMQ，使用队列发送hello world字符串
  * Created by gyfeng on 17-1-16.
  */
-public class HelloWordPublisher {
+public class HelloWorldPublisher {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(HelloWordPublisher.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(HelloWorldPublisher.class);
 
-    private HelloWordPublisher() {
+    private HelloWorldPublisher() {
     }
 
     public static void main(String[] args) throws JMSException, InterruptedException {
