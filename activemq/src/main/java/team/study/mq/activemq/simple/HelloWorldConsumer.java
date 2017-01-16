@@ -5,6 +5,7 @@ import javax.jms.*;
 import org.apache.activemq.ActiveMQConnectionFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import team.study.mq.activemq.util.MQCloseUtils;
 
 /**
  * 简单的测试avtiveMQ，使用队列接收hello world字符串
@@ -46,38 +47,8 @@ public class HelloWorldConsumer {
                 }
             }
         } finally {
-            closeConnection(connection, session, consumer);
+            MQCloseUtils.closeConnection(connection, session, consumer);
         }
     }
 
-    /**
-     * 关闭MQ连接，若关闭连接失败，不会抛出异常。会在日志中打印warn级别的日志
-     *
-     * @param connection MQ连接对象
-     * @param session    MQ Session对象
-     * @param consumer   MQ消息消费者
-     */
-    private static void closeConnection(Connection connection, Session session, MessageConsumer consumer) {
-        try {
-            if (consumer != null) {
-                consumer.close();
-            }
-        } catch (JMSException e) {
-            LOGGER.warn("close consumer error", e);
-        }
-        try {
-            if (session != null) {
-                session.close();
-            }
-        } catch (JMSException e) {
-            LOGGER.warn("close session error", e);
-        }
-        try {
-            if (connection != null) {
-                connection.close();
-            }
-        } catch (JMSException e) {
-            LOGGER.warn("close connection error", e);
-        }
-    }
 }

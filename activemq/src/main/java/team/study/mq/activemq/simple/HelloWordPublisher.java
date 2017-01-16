@@ -6,6 +6,7 @@ import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.activemq.command.ActiveMQTextMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import team.study.mq.activemq.util.MQCloseUtils;
 
 /**
  * 简单的测试avtiveMQ，使用队列发送hello world字符串
@@ -42,42 +43,13 @@ public class HelloWordPublisher {
                 message.setText("hello-world:" + i);
                 LOGGER.info("send message:[hello-world:{}]", i);
                 producer.send(message);
+                session.recover();
                 Thread.sleep(1000);
             }
         } finally {
             // 关闭连接
-            closeConnection(connection, session, producer);
+            MQCloseUtils.closeConnection(connection, session, producer);
         }
     }
 
-    /**
-     * 关闭MQ连接，若关闭连接失败，不会抛出异常。会在日志中打印warn级别的日志
-     *
-     * @param connection MQ连接对象
-     * @param session    MQ Session对象
-     * @param producer   MQ发布对象
-     */
-    private static void closeConnection(Connection connection, Session session, MessageProducer producer) {
-        try {
-            if (producer != null) {
-                producer.close();
-            }
-        } catch (JMSException e) {
-            LOGGER.warn("close producer error", e);
-        }
-        try {
-            if (session != null) {
-                session.close();
-            }
-        } catch (JMSException e) {
-            LOGGER.warn("close session error", e);
-        }
-        try {
-            if (connection != null) {
-                connection.close();
-            }
-        } catch (JMSException e) {
-            LOGGER.warn("close connection error", e);
-        }
-    }
 }
