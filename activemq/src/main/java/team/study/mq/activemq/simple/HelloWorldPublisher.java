@@ -43,7 +43,6 @@ public class HelloWorldPublisher {
                 message.setText("hello-world:" + i);
                 LOGGER.info("send message:[hello-world:{}]", i);
                 producer.send(message);
-                session.recover();
                 Thread.sleep(1000);
             }
         } finally {
