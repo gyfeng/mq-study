@@ -9,7 +9,7 @@ import team.study.mq.activemq.simple.HelloWorldConsumer;
 import team.study.mq.activemq.util.MQCloseUtils;
 
 /**
- * AMQ主题Topic测试，消息发布者
+ * AMQ主题Topic测试，消息订阅者
  * Created by gyfeng on 17-1-17.
  */
 public class HelloWorldTopicConsumer {

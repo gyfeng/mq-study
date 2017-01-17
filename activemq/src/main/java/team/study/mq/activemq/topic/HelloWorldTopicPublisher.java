@@ -10,7 +10,7 @@ import team.study.mq.activemq.simple.HelloWorldPublisher;
 import team.study.mq.activemq.util.MQCloseUtils;
 
 /**
- * AMQ主题Topic测试，消息订阅者
+ * AMQ主题Topic测试，消息发布者
  * Created by gyfeng on 17-1-17.
  */
 public class HelloWorldTopicPublisher {
