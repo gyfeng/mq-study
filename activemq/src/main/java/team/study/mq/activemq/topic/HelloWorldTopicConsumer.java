@@ -3,17 +3,14 @@ package team.study.mq.activemq.topic;
 import javax.jms.*;
 
 import org.apache.activemq.ActiveMQConnectionFactory;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import team.study.mq.activemq.simple.HelloWorldConsumer;
 import team.study.mq.activemq.util.MQCloseUtils;
+import team.study.mq.activemq.util.MessageProcessor;
 
 /**
  * AMQ主题Topic测试，消息订阅者
  * Created by gyfeng on 17-1-17.
  */
 public class HelloWorldTopicConsumer {
-    private static final Logger LOGGER = LoggerFactory.getLogger(HelloWorldConsumer.class);
 
     private HelloWorldTopicConsumer() {
     }
@@ -36,17 +33,7 @@ public class HelloWorldTopicConsumer {
             Topic helloWorldTopic = session.createTopic("hello-world-topic");
             // 消息接收者
             consumer = session.createDurableSubscriber(helloWorldTopic, "local-subscriber");
-            consumer.setMessageListener((Message message) -> {
-                if (message instanceof TextMessage) {
-                    try {
-                        LOGGER.info("receive topic message:{}", ((TextMessage) message).getText());
-                    } catch (JMSException e) {
-                        LOGGER.error("处理消息错误", e);
-                    }
-                } else {
-                    LOGGER.warn("receive topic message type not is TextMessage", message.getClass());
-                }
-            });
+            consumer.setMessageListener(MessageProcessor::print);
             Thread.sleep(15000);
         } finally {
             MQCloseUtils.closeConnection(connection, session, consumer);

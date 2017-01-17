@@ -3,17 +3,14 @@ package team.study.mq.activemq.transaction;
 import javax.jms.*;
 
 import org.apache.activemq.ActiveMQConnectionFactory;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import team.study.mq.activemq.util.MQCloseUtils;
+import team.study.mq.activemq.util.MessageProcessor;
 
 /**
  * 测试事务型消费者，事务回滚之后并不服务器中删除，下次重建Session的时候会再次消费未消费的消息
  * Created by gyfeng on 17-1-16.
  */
 public class TransactionRollbackConsumer {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(TransactionRollbackConsumer.class);
 
     private TransactionRollbackConsumer() {
     }
@@ -40,11 +37,7 @@ public class TransactionRollbackConsumer {
                 if (message == null) {
                     break;
                 }
-                if (message instanceof TextMessage) {
-                    LOGGER.info("receive message:{}", ((TextMessage) message).getText());
-                } else {
-                    LOGGER.warn("receive message type not is TextMessage", message.getClass());
-                }
+                MessageProcessor.print(message);
             }
             // 消息还存在于AMQ服务器中，若不进行commit，则不会删除消息。再次打开Session进行消费时，还会重复消费
             session.rollback();

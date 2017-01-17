@@ -3,17 +3,14 @@ package team.study.mq.activemq.simple;
 import javax.jms.*;
 
 import org.apache.activemq.ActiveMQConnectionFactory;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import team.study.mq.activemq.util.MQCloseUtils;
+import team.study.mq.activemq.util.MessageProcessor;
 
 /**
  * 简单的测试avtiveMQ，使用队列接收hello world字符串
  * Created by gyfeng on 17-1-16.
  */
 public class HelloWorldConsumer {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(HelloWorldConsumer.class);
 
     private HelloWorldConsumer() {
     }
@@ -40,11 +37,7 @@ public class HelloWorldConsumer {
                 if (message == null) {
                     break;
                 }
-                if (message instanceof TextMessage) {
-                    LOGGER.info("receive message:{}", ((TextMessage) message).getText());
-                } else {
-                    LOGGER.warn("receive message type not is TextMessage", message.getClass());
-                }
+                MessageProcessor.print(message);
             }
         } finally {
             MQCloseUtils.closeConnection(connection, session, consumer);
