@@ -21,11 +21,12 @@ public class SendMsgUtils {
      * 发送消息到MQ
      *
      * @param queueName   队列名称
+     * @param msgCount    要发送的消息条数
      * @param sleepMillis 每条消息的间隔时间
      * @throws JMSException         发送消息异常
-     * @throws InterruptedException 睡眠中断异常
+     * @throws InterruptedException 异常
      */
-    public static void sendQueueMessage(String queueName, long sleepMillis) throws JMSException, InterruptedException {
+    public static void sendQueueMessage(String queueName, int msgCount, long sleepMillis) throws JMSException, InterruptedException {
         // 构造 ConnectionFactory 对象，连接本地的activeMQ，默认打开61616端口
         ConnectionFactory connectionFactory = new ActiveMQConnectionFactory("tcp://localhost:61616");
         // 通过 ConnectionFactory 对象创建连接
@@ -44,7 +45,7 @@ public class SendMsgUtils {
             producer = session.createProducer(helloWorldQueue);
 
             // 循环发送消息
-            for (int i = 0; i < 1000; i++) {
+            for (int i = 0; i < msgCount; i++) {
                 LOGGER.info("send message:[hello-world:{}]", i);
                 producer.send(session.createTextMessage("hello-world:" + i));
                 if (sleepMillis > 0) {
