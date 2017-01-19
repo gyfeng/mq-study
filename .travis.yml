@@ -5,3 +5,5 @@ jdk:
 
 after_success:
   - bash <(curl -s https://codecov.io/bash)
+codecov:
+  token: e53944e3-f1a3-4e3c-844f-a84f0907dddc
