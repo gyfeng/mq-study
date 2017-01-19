@@ -20,7 +20,8 @@ public class HelloWorldAutoAckPrefetchConsumer {
 
     /** 队列名称 */
     private static final String AUTO_ACK_QUEUE_NAME = "hello-world-optimizeAck";
-    public static final int MSG_COUNT = 100;
+    /** 要发送测试的消息条数 */
+    private static final int MSG_COUNT = 100;
 
     private HelloWorldAutoAckPrefetchConsumer() {
     }
