@@ -1,5 +1,6 @@
 package team.study.mq.activemq.ack;
 
+import java.util.concurrent.CountDownLatch;
 import javax.jms.*;
 
 import org.apache.activemq.ActiveMQConnectionFactory;
@@ -19,6 +20,7 @@ public class HelloWorldAutoAckPrefetchConsumer {
 
     /** 队列名称 */
     private static final String AUTO_ACK_QUEUE_NAME = "hello-world-optimizeAck";
+    public static final int MSG_COUNT = 100;
 
     private HelloWorldAutoAckPrefetchConsumer() {
     }
@@ -41,21 +43,23 @@ public class HelloWorldAutoAckPrefetchConsumer {
             Queue helloWorldQueue = session.createQueue(AUTO_ACK_QUEUE_NAME + "?consumer.prefetchSize=15");
             // 消息接收者
             consumer = session.createConsumer(helloWorldQueue);
+            CountDownLatch countDownLatch = new CountDownLatch(MSG_COUNT);
             consumer.setMessageListener((Message message) -> {
                 MessageProcessor.print(message);
+                countDownLatch.countDown();
                 try {
                     Thread.sleep(1000);
                 } catch (InterruptedException e) {
                     LOGGER.error("发生异常", e);
                 }
             });
-            Thread.sleep(105000);
+            countDownLatch.await();
         } finally {
             MQCloseUtils.closeConnection(connection, session, consumer);
         }
     }
 
     private static void sendMsg() throws JMSException, InterruptedException {
-        SendMsgUtils.sendQueueMessage(AUTO_ACK_QUEUE_NAME, 100, 10);
+        SendMsgUtils.sendQueueMessage(AUTO_ACK_QUEUE_NAME, MSG_COUNT, 10);
     }
 }
