@@ -5,3 +5,4 @@
 - [ActiveMQ Connection URIs](http://activemq.apache.org/activemq-connection-uris.html)
 - [ActiveMQ Destination Options
 ](http://activemq.apache.org/destination-options.html)
+- [AMQ虚拟Destinations](http://blog.csdn.net/jason5186/article/details/45502711)
