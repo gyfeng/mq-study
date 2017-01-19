@@ -3,6 +3,7 @@ package team.study.mq.activemq.util;
 import javax.jms.*;
 
 import org.apache.activemq.ActiveMQConnectionFactory;
+import org.apache.activemq.command.ActiveMQTextMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -45,16 +46,57 @@ public class SendMsgUtils {
             producer = session.createProducer(helloWorldQueue);
 
             // 循环发送消息
-            for (int i = 0; i < msgCount; i++) {
-                LOGGER.info("send message:[hello-world:{}]", i);
-                producer.send(session.createTextMessage("hello-world:" + i));
-                if (sleepMillis > 0) {
-                    Thread.sleep(sleepMillis);
-                }
-            }
+            sendMessage(producer, msgCount, sleepMillis);
         } finally {
             // 关闭连接
             MQCloseUtils.closeConnection(connection, session, producer);
+        }
+    }
+
+    /**
+     * 发送消息到Topic
+     *
+     * @param topicName   主题名称
+     * @param msgCount    要发送的消息条数
+     * @param sleepMillis 每条消息的间隔时间
+     * @throws JMSException         发送消息异常
+     * @throws InterruptedException 异常
+     */
+    public static void sendTopicMessage(String topicName, int msgCount, long sleepMillis) throws JMSException, InterruptedException {
+        // 构造 ConnectionFactory 对象，连接本地的activeMQ，默认打开61616端口
+        ConnectionFactory connectionFactory = new ActiveMQConnectionFactory("tcp://localhost:61616");
+        // 通过 ConnectionFactory 对象创建连接
+        Connection connection = null;
+        Session session = null;
+        MessageProducer producer = null;
+        try {
+            connection = connectionFactory.createConnection();
+            // 开始连接
+            connection.start();
+            // 创建会话，该会话中的消息都使用自动确认机制
+            session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
+            // 创建发送的目的MQ
+            // 消息发送者
+            Destination helloWorldQueue = session.createTopic(topicName);
+            producer = session.createProducer(helloWorldQueue);
+            sendMessage(producer, msgCount, sleepMillis);
+
+        } finally {
+            // 关闭连接
+            MQCloseUtils.closeConnection(connection, session, producer);
+        }
+    }
+
+    private static void sendMessage(MessageProducer producer, int msgCount, long sleepMillis) throws JMSException, InterruptedException {
+        // 循环发送消息
+        for (int i = 0; i < msgCount; i++) {
+            LOGGER.info("send message:[hello-world:{}]", i);
+            ActiveMQTextMessage message = new ActiveMQTextMessage();
+            message.setText("hello-world:" + i);
+            producer.send(message);
+            if (sleepMillis > 0) {
+                Thread.sleep(sleepMillis);
+            }
         }
     }
 }
