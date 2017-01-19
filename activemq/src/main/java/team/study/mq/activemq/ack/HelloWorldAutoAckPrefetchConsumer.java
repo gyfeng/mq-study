@@ -3,6 +3,8 @@ package team.study.mq.activemq.ack;
 import javax.jms.*;
 
 import org.apache.activemq.ActiveMQConnectionFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import team.study.mq.activemq.util.MQCloseUtils;
 import team.study.mq.activemq.util.MessageProcessor;
 import team.study.mq.activemq.util.SendMsgUtils;
@@ -13,6 +15,8 @@ import team.study.mq.activemq.util.SendMsgUtils;
  */
 public class HelloWorldAutoAckPrefetchConsumer {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(HelloWorldAutoAckPrefetchConsumer.class);
+
     /** 队列名称 */
     private static final String AUTO_ACK_QUEUE_NAME = "hello-world-optimizeAck";
 
@@ -22,7 +26,7 @@ public class HelloWorldAutoAckPrefetchConsumer {
     public static void main(String[] args) throws JMSException, InterruptedException {
         sendMsg();
         // 构造 ConnectionFactory 对象，连接本地的activeMQ，默认打开61616端口
-        ConnectionFactory connectionFactory = new ActiveMQConnectionFactory("tcp://localhost:61616?jms.optimizeAcknowledge=true&jms.optimizeAcknowledgeTimeOut=15000");
+        ConnectionFactory connectionFactory = new ActiveMQConnectionFactory("tcp://localhost:61616?jms.optimizeAcknowledge=true&jms.optimizeAcknowledgeTimeOut=2000");
         // 通过 ConnectionFactory 对象创建连接
         Connection connection = null;
         Session session = null;
@@ -37,8 +41,15 @@ public class HelloWorldAutoAckPrefetchConsumer {
             Queue helloWorldQueue = session.createQueue(AUTO_ACK_QUEUE_NAME + "?consumer.prefetchSize=15");
             // 消息接收者
             consumer = session.createConsumer(helloWorldQueue);
-            consumer.setMessageListener(MessageProcessor::print);
-            Thread.sleep(1000);
+            consumer.setMessageListener((Message message) -> {
+                MessageProcessor.print(message);
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    LOGGER.error("发生异常", e);
+                }
+            });
+            Thread.sleep(105000);
         } finally {
             MQCloseUtils.closeConnection(connection, session, consumer);
         }
